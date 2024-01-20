@@ -13,7 +13,8 @@ def fetch_stats(selected_user,df):
     #number of words
     words = []
     for mes in df['messages']:
-        words.extend(mes.split())
+        if(mes!=' <Media omitted>\n'):
+            words.extend(mes.split())
 
     #number of media items shared
     number_of_media=df[df['messages']==' <Media omitted>\n'].shape[0]
