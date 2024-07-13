@@ -3,6 +3,9 @@ from wordcloud import WordCloud
 import pandas as pd
 from collections import Counter
 import emoji
+import nltk
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
+nltk.download('vader_lexicon')
 def fetch_stats(selected_user,df):
     if(selected_user!='Overall'):
         df = df[df['user'] == selected_user]
@@ -125,3 +128,19 @@ def heatmap(selected_user,df):
 
     return df.pivot_table(index='day_name',columns='period',values='messages',aggfunc='count').fillna(0)
 
+def sentiment(selected_user,df):
+    if (selected_user != 'Overall'):
+        df = df[df['user'] == selected_user]
+
+    df = df[df['messages'] != ' <Media omitted>\n']
+    df = df.reset_index(drop=True)
+
+    sentiments=SentimentIntensityAnalyzer()
+    df['positive']=[sentiments.polarity_scores(i)["pos"] for i in df['messages']]
+    df['negative'] = [sentiments.polarity_scores(i)["neg"] for i in df['messages']]
+    df['neutral'] = [sentiments.polarity_scores(i)["neu"] for i in df['messages']]
+    x=sum(df['positive'])
+    y=sum(df['negative'])
+    z=sum(df['neutral'])
+
+    return df,x,y,z

@@ -38,6 +38,28 @@ if uploaded_file is not None:
             st.header("No. of Links")
             st.title(links_number)
 
+        new_df,x,y,z=helper.sentiment(selected_user,df)
+
+        st.title("Nature of Chat")
+        total = x + y + z
+
+        # Calculate percentages
+        percentages = [x / total * 100, y / total * 100, z / total * 100]
+        labels = ['Postive', 'Negative', 'Neutral']
+        colors = ['#ff9999', '#66b3ff', '#99ff99']
+
+        # Draw the pie chart
+        fig, ax = plt.subplots()
+        ax.pie(percentages, colors=colors, startangle=90)
+
+        # Add legend at the bottom
+        plt.legend(labels=[f'{label}: {percentage:.1f}%' for label, percentage in zip(labels, percentages)],
+                   loc='upper center', bbox_to_anchor=(0.5, -0.05), ncol=3)
+
+
+        # Display the pie chart in Streamlit
+        st.pyplot(fig)
+
         #monthly timeline
         st.title("Monthly Timeline")
         timeline = helper.month_time(selected_user, df)
